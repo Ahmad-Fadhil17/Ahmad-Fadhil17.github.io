@@ -33,33 +33,6 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
-
-  <!-- email js -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-      (function () {
-        // https://dashboard.emailjs.com/admin/integration
-        emailjs.init("user_nmwkTOmceaM5cAejyQS2u");
-      })();
-    </script>
-    <script type="text/javascript">
-      window.onload = function () {
-        document.getElementById("contact-form").addEventListener("submit", function (event) {
-          event.preventDefault();
-          // generate a five digit number for the contact_number variable
-          this.contact_number.value = (Math.random() * 100000) | 0;
-          // these IDs from the previous steps
-          emailjs.sendForm("service_nkr8mb9", "template_4490zlp", this).then(
-            function () {
-              console.log("SUCCESS!");
-            },
-            function (error) {
-              console.log("FAILED...", error);
-            }
-          );
-        });
-      };
-    </script>
 </head>
 
 <body>
@@ -755,13 +728,17 @@
         </div>
       </div>
 
-      <form id="contact-form">
+      <div class="alert alert-success alert-dismissible fade show d-none" role="alert">
+        <strong>Thank You!</strong> We got your message.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <form name="myportfolio-contact-form">
         <div class="row">
           <div class="col-md-6 form-group">
-            <input type="text" name="user_name" class="form-control" placeholder="Your Name" required>
+            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
           </div>
           <div class="col-md-6 form-group mt-3 mt-md-0">
-            <input type="email" class="form-control" name="user_email" placeholder="Your Email" required>
+            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
           </div>
         </div>
         <div class="form-group mt-3">
@@ -775,7 +752,13 @@
           <div class="error-message"></div>
           <div class="sent-message">Your message has been sent. Thank you!</div>
         </div> -->
-        <div class="text-center"><button type="submit">Send Message</button></div>
+        <div class="text-center"><button type="submit" class="btn btn-primary btn-send ">Send Message</button></div>
+        <div class="text-center">
+          <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+        </div>
       </form>
 
     </div>
@@ -803,7 +786,30 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
+  <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwCqb5k92F8ZRRWzocy1GM7nhAr7n9c8LRkZL-pL_JIKSHTYWCtknx1txEFbcjT_oOQOQ/exec'
+  const form = document.forms['myportfolio-contact-form'];
 
+  const btnSend = document.querySelector('.btn-send');
+  const btnLoading = document.querySelector('.btn-loading');
+  const alert = document.querySelector('.alert');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault()
+
+    btnLoading.classList.toggle('d-none');
+    btnSend.classList.toggle('d-none');
+    
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+      .then(response => {
+        btnLoading.classList.toggle('d-none');
+        btnSend.classList.toggle('d-none');
+        alert.classList.toggle('d-none');
+        form.reset();
+        console.log('Success!', response)})
+      .catch(error => console.error('Error!', error.message))
+  })
+</script>
 </body>
 
 </html>
